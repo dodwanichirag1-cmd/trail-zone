@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TrialZone</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06090f;--surf:#0c1018;--card:#111520;--card2:#161c28;
+  --bdr:#1a2235;--bdr2:#222f45;
+  --acc:#2563eb;--accl:#3b82f6;--accd:#1d4ed8;--ag:rgba(37,99,235,.13);
+  --gr:#16a34a;--ye:#ca8a04;--re:#dc2626;--pu:#7c3aed;
+  --t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--t4:#2d3a50;
+  --mob:56px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;padding-bottom:var(--mob)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px}
+
+/* ─ NAVBAR ─ */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,9,15,.97);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);
+  height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;
+  background:linear-gradient(135deg,#2563eb,#60a5fa);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text}
+.nav-right{display:flex;align-items:center;gap:8px}
+
+/* LANG DROPDOWN */
+.lang-wrap{position:relative}
+.lang-toggle{display:flex;align-items:center;gap:5px;padding:6px 12px;
+  background:var(--card);border:1px solid var(--bdr);border-radius:20px;
+  cursor:pointer;font-size:12px;font-weight:700;color:var(--t2);transition:all .15s;
+  font-family:'Manrope',sans-serif}
+.lang-toggle:hover{border-color:var(--bdr2);color:var(--t1)}
+.lang-toggle .globe{font-size:15px}
+.lang-drop{position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--card);border:1px solid var(--bdr);border-radius:12px;
+  overflow:hidden;min-width:150px;z-index:200;
+  opacity:0;pointer-events:none;transform:translateY(-6px);transition:all .2s}
+.lang-drop.open{opacity:1;pointer-events:all;transform:translateY(0)}
+.lang-opt{display:flex;align-items:center;gap:9px;padding:10px 14px;
+  cursor:pointer;font-size:13px;font-weight:600;color:var(--t2);transition:all .15s}
+.lang-opt:hover{background:var(--surf);color:var(--t1)}
+.lang-opt.active{color:var(--accl);background:var(--ag)}
+.lang-opt .lfl{font-size:16px}
+
+.uav-wrap{display:flex;align-items:center;gap:6px}
+.uav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:12px}
+.uav.coach{background:rgba(37,99,235,.2);color:#60a5fa;border:2px solid rgba(37,99,235,.4)}
+.uav.player{background:rgba(22,163,74,.2);color:#4ade80;border:2px solid rgba(22,163,74,.4)}
+.uav.admin{background:rgba(124,58,237,.2);color:#a78bfa;border:2px solid rgba(124,58,237,.4)}
+.rpill{padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.rpill.coach{background:rgba(37,99,235,.15);color:#60a5fa}
+.rpill.player{background:rgba(22,163,74,.12);color:#4ade80}
+.rpill.admin{background:rgba(124,58,237,.12);color:#a78bfa}
+.nibn{width:32px;height:32px;border-radius:9px;border:1px solid var(--bdr);background:var(--card);
+  color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:15px;transition:all .15s;position:relative}
+.nibn:hover{border-color:var(--acc);color:var(--t1)}
+.bdot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;
+  background:var(--re);border-radius:50%;border:2px solid var(--bg)}
+.out-btn{padding:5px 11px;background:transparent;border:1px solid var(--bdr);
+  border-radius:8px;color:var(--t3);font-size:11px;cursor:pointer;transition:all .2s;
+  font-family:'Manrope',sans-serif}
+.out-btn:hover{border-color:var(--re);color:var(--re)}
+
+/* ─ LOGIN ─ */
+#login-screen{position:fixed;inset:0;z-index:150;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:16px;padding-top:72px;overflow-y:auto}
+.login-wrap{width:100%;max-width:420px}
+.login-logo{text-align:center;margin-bottom:22px}
+.logo-txt{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:5px;
+  background:linear-gradient(135deg,#2563eb,#93c5fd);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:4px;
+  color:var(--t3);text-transform:uppercase;margin-top:4px}
+.lcard{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:26px 22px}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:20px;
+  background:var(--surf);border-radius:12px;padding:5px;border:1px solid var(--bdr)}
+.rtab{padding:11px 6px;border-radius:8px;border:none;background:transparent;
+  color:var(--t3);font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.rtab .ri{font-size:20px}
+.rtab.active.coach{background:rgba(37,99,235,.15);color:#60a5fa}
+.rtab.active.player{background:rgba(22,163,74,.12);color:#4ade80}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:7px}
+.fld input,.fld select{width:100%;padding:13px 14px;background:var(--surf);border:1px solid var(--bdr);
+  border-radius:10px;color:var(--t1);font-family:'Manrope',sans-serif;font-size:15px;
+  outline:none;transition:all .2s;-webkit-appearance:none}
+.fld input:focus,.fld select:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--ag)}
+.fld select option{background:var(--card)}
+.lbtn{width:100%;padding:14px;border:none;border-radius:11px;font-family:'Manrope',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:4px}
+.lbtn.cb{background:var(--acc);color:#fff}
+.lbtn.pb{background:var(--gr);color:#fff}
+.lbtn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+/* ─ APP ─ */
+#app{display:none;padding-top:56px}
+.app-wrap{display:flex;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--bdr);
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;padding:16px 12px}
+.slbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--t4);margin-bottom:9px;padding-left:8px}
+.si{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;
+  cursor:pointer;transition:all .15s;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:2px}
+.si:hover{background:var(--surf);color:var(--t1)}
+.si.active{background:var(--ag);color:var(--accl)}
+.sico{font-size:15px;width:18px;text-align:center}
+.scnt{margin-left:auto;background:var(--surf);border-radius:20px;padding:1px 7px;font-size:10px;font-weight:700;color:var(--t3)}
+.scnt.pnd{background:rgba(202,138,4,.15);color:var(--ye)}
+.spp{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;
+  cursor:pointer;transition:all .15s;font-size:12px;color:var(--t2);margin-bottom:2px}
+.spp:hover,.spp.active{background:var(--surf);color:var(--t1)}
+.spdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* FEED */
+.feed-area{flex:1;min-width:0;padding:16px 14px}
+@media(min-width:768px){.feed-area{padding:20px 24px}}
+
+/* RIGHT PANEL */
+.rpanel{width:260px;flex-shrink:0;border-left:1px solid var(--bdr);
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;padding:16px 14px}
+.rpt{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--t4);margin-bottom:11px}
+.rpsc{margin-bottom:22px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sb2{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center}
+.snum{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;color:var(--accl);line-height:1}
+.slb{font-size:10px;color:var(--t3);margin-top:2px}
+.cr{display:flex;align-items:center;gap:9px;padding:7px;border-radius:9px;cursor:pointer;transition:all .15s;margin-bottom:3px}
+.cr:hover{background:var(--surf)}
+.crav{width:32px;height:32px;border-radius:50%;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#60a5fa;flex-shrink:0}
+.cri{flex:1;min-width:0}
+.crn{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crc{font-size:10px;color:var(--t2);margin-top:1px}
+.fwb{padding:3px 9px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t3);font-size:10px;font-weight:700;cursor:pointer;transition:all .15s}
+.fwb:hover{border-color:var(--acc);color:var(--accl)}
+.fwb.fw{background:var(--ag);color:var(--accl);border-color:rgba(37,99,235,.3)}
+
+/* MOBILE BOTTOM NAV */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(6,9,15,.98);backdrop-filter:blur(20px);border-top:1px solid var(--bdr);
+  height:var(--mob);align-items:stretch}
+.mni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;color:var(--t3);font-size:10px;font-weight:600;padding:5px 0;
+  border:none;background:transparent;font-family:'Manrope',sans-serif;position:relative;transition:color .15s}
+.mni.active,.mni:hover{color:var(--accl)}
+.mnico{font-size:19px}
+.mob-badge{position:absolute;top:4px;right:calc(50% - 16px);background:var(--ye);
+  color:#000;font-size:9px;font-weight:800;width:15px;height:15px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* FILTER BAR */
+.fbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:16px;scrollbar-width:none}
+.fbar::-webkit-scrollbar{display:none}
+.fchip{padding:7px 14px;border-radius:20px;border:1px solid var(--bdr);background:transparent;
+  color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;
+  white-space:nowrap;font-family:'Manrope',sans-serif}
+.fchip.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+.fchip:hover{border-color:var(--acc);color:var(--t1)}
+
+/* POST FORM */
+.pfw{background:var(--card);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:18px}
+.pfhdr{padding:14px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.pftit{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+.exbtn{padding:8px 15px;background:var(--acc);color:#fff;border:none;border-radius:9px;
+  font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:5px}
+.exbtn:hover{background:var(--accd)}
+.exbtn.cnc{background:var(--surf);color:var(--t2);border:1px solid var(--bdr)}
+.exbtn.cnc:hover{border-color:var(--re);color:var(--re);background:transparent}
+.pfbody{padding:16px;display:none;animation:sd .25s ease}
+@keyframes sd{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.pfbody.open{display:block}
+
+/* BANNER */
+.bua{border:2px dashed var(--bdr2);border-radius:12px;cursor:pointer;transition:all .2s;
+  margin-bottom:16px;position:relative;overflow:hidden;min-height:110px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:22px}
+.bua:hover{border-color:var(--acc);background:var(--ag)}
+.bua.has-img{border-style:solid;border-color:var(--acc);padding:0}
+.bprev{width:100%;height:160px;object-fit:cover;border-radius:10px;display:none}
+.bua.has-img .bprev{display:block}
+.bua.has-img .bph{display:none}
+.bph{pointer-events:none;text-align:center}
+.bico{font-size:26px;margin-bottom:3px}
+.bh1{font-size:13px;color:var(--t2);font-weight:600}
+.bh2{font-size:11px;color:var(--t3)}
+#banner-inp{display:none}
+.bchg{position:absolute;bottom:8px;right:8px;padding:4px 11px;background:rgba(0,0,0,.75);
+  color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:7px;font-size:11px;
+  cursor:pointer;font-family:'Manrope',sans-serif;display:none}
+.bua.has-img .bchg{display:block}
+
+/* FIELDS */
+.ff{margin-bottom:13px}
+.ff label{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.ff .req{color:var(--re);margin-left:2px}
+.ff input,.ff select,.ff textarea{width:100%;padding:11px 13px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--t1);font-family:'Manrope',sans-serif;font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--ag)}
+.ff select option{background:var(--card)}
+.ff textarea{resize:none;line-height:1.6}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.fg2{grid-template-columns:1fr}}
+.fsec{font-size:11px;font-weight:800;color:var(--t2);letter-spacing:.8px;text-transform:uppercase;margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--bdr)}
+
+/* PILL SELECTOR */
+.cpg{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}
+.cpill{padding:7px 12px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none;font-family:'Manrope',sans-serif}
+.cpill:hover{border-color:var(--acc);color:var(--t1)}
+.cpill.sel{background:var(--ag);border-color:var(--acc);color:var(--accl)}
+
+/* DOC GRID */
+.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+@media(max-width:400px){.doc-grid{grid-template-columns:1fr}}
+.ditem{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;transition:all .15s;user-select:none}
+.ditem:hover{border-color:var(--bdr2)}
+.ditem.sel{background:rgba(37,99,235,.09);border-color:rgba(37,99,235,.4)}
+.dchk{width:17px;height:17px;border-radius:5px;border:2px solid var(--bdr2);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s}
+.ditem.sel .dchk{background:var(--acc);border-color:var(--acc)}
+.dlbl{font-size:12px;font-weight:600;color:var(--t2);line-height:1.3}
+.ditem.sel .dlbl{color:var(--t1)}
+
+/* SUBMIT */
+.sub-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--acc),#1d4ed8);color:#fff;border:none;border-radius:10px;font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:16px}
+.sub-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(37,99,235,.35)}
+.pnote{background:rgba(202,138,4,.07);border:1px solid rgba(202,138,4,.2);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--ye);margin-top:10px;display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+
+/* TRIAL CARDS */
+.tc{background:var(--card);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:14px;transition:all .2s;animation:fu .3s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.tc:hover{border-color:rgba(37,99,235,.3);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.tcbanner{width:100%;height:150px;object-fit:cover;display:block}
+.tcbnph{display:flex;align-items:center;justify-content:center;font-size:26px;height:70px}
+.tcbody{padding:14px}
+.tctop{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px}
+.tccrow{display:flex;align-items:center;gap:9px}
+.tcav{width:38px;height:38px;border-radius:50%;background:rgba(37,99,235,.15);border:1.5px solid rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#60a5fa;flex-shrink:0}
+.tcnm{font-size:13px;font-weight:700}
+.tccl{font-size:11px;color:var(--t2);margin-top:1px}
+.tcbadges{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.tcts{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t3)}
+.sb{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700}
+.sbo{background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)}
+.sbu{background:rgba(202,138,4,.1);color:var(--ye);border:1px solid rgba(202,138,4,.25)}
+.sbc{background:rgba(220,38,38,.1);color:var(--re);border:1px solid rgba(220,38,38,.25)}
+.sbp{background:rgba(202,138,4,.12);color:var(--ye);border:1px solid rgba(202,138,4,.3)}
+.sdts{width:5px;height:5px;border-radius:50%;background:currentColor}
+.stag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:8px}
+.tctitle{font-family:'Bebas Neue',sans-serif;font-size:25px;letter-spacing:1.5px;line-height:1.1;margin-bottom:7px}
+.tcdesc{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:12px}
+.igrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:12px}
+@media(min-width:400px){.igrid{grid-template-columns:repeat(4,1fr)}}
+.ibox{background:var(--surf);border-radius:8px;padding:8px 9px;text-align:center}
+.ilbl{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.ival{font-size:12px;font-weight:700}
+.pill-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.ptag{padding:3px 9px;background:var(--surf);border:1px solid var(--bdr);border-radius:20px;font-size:11px;color:var(--t2)}
+.docsbox{background:rgba(202,138,4,.05);border:1px solid rgba(202,138,4,.18);border-radius:9px;padding:10px 12px;margin-bottom:12px}
+.docsbox-title{font-size:10px;font-weight:800;color:var(--ye);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.docsbox-list{display:flex;flex-wrap:wrap;gap:5px}
+.dtag{display:flex;align-items:center;gap:4px;padding:3px 9px;background:rgba(202,138,4,.08);border:1px solid rgba(202,138,4,.2);border-radius:20px;font-size:11px;color:var(--ye);font-weight:600}
+.cbar{background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.15);border-radius:9px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:var(--t2)}
+.tca{display:flex;align-items:center;gap:5px;padding-top:11px;border-top:1px solid var(--bdr);flex-wrap:wrap}
+.abt{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--t2);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.abt:hover{background:var(--surf);color:var(--t1);border-color:var(--acc)}
+.abt.liked{color:#f87171;border-color:rgba(220,38,38,.4);background:rgba(220,38,38,.06)}
+.apbtn{margin-left:auto;padding:7px 16px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.apbtn:hover{background:var(--accd)}
+.apbtn.applied{background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.3);cursor:default}
+.apbtn.cld{background:rgba(100,100,130,.1);color:var(--t3);border:1px solid var(--bdr);cursor:default}
+.apbtn.ccb{background:rgba(220,38,38,.1);color:var(--re);border:1px solid rgba(220,38,38,.3);font-size:11px}
+.apbtn.ccb:hover{background:rgba(220,38,38,.2)}
+
+/* OWNER EDIT BTN */
+.edit-btn{padding:5px 10px;background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.3);border-radius:8px;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+.edit-btn:hover{background:rgba(124,58,237,.22)}
+
+/* COMMENTS */
+.cmw{margin-top:11px;border-top:1px solid var(--bdr);padding-top:11px;display:none}
+.cmw.open{display:block}
+.cmt{display:flex;gap:8px;margin-bottom:9px}
+.cmav{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.25)}
+.cmav.cc{background:rgba(37,99,235,.15);color:#60a5fa;border-color:rgba(37,99,235,.25)}
+.cmnm{font-size:11px;font-weight:700;margin-bottom:1px}
+.cmtx{font-size:12px;color:var(--t2);line-height:1.5}
+.cmir{display:flex;gap:7px;margin-top:9px}
+.cmin{flex:1;padding:9px 12px;background:var(--surf);border:1px solid var(--bdr);border-radius:9px;color:var(--t1);font-family:'Manrope',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.cmin:focus{border-color:var(--acc)}
+.cmsnd{padding:9px 14px;background:var(--acc);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif}
+
+/* PENDING CARD */
+.pc{background:rgba(202,138,4,.05);border:1px solid rgba(202,138,4,.2);border-radius:14px;overflow:hidden;margin-bottom:14px;opacity:.72;position:relative}
+.pco{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(202,138,4,.02) 10px,rgba(202,138,4,.02) 20px);pointer-events:none}
+.plbl{background:rgba(202,138,4,.14);border-bottom:1px solid rgba(202,138,4,.2);padding:7px 14px;font-size:11px;color:var(--ye);font-weight:800;display:flex;align-items:center;gap:6px}
+
+/* ADMIN PANEL */
+#admin-panel{background:var(--card);border:1px solid var(--bdr);border-radius:15px;margin-bottom:18px;overflow:hidden}
+.aph{background:rgba(124,58,237,.07);border-bottom:1px solid rgba(124,58,237,.2);padding:13px 16px;display:flex;align-items:center;justify-content:space-between}
+.apt{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#a78bfa;display:flex;align-items:center;gap:7px}
+.pcb{background:var(--ye);color:#000;width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.acw{padding:13px;display:flex;flex-direction:column;gap:11px}
+.arc{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden}
+.arcb{width:100%;height:90px;object-fit:cover;display:none}
+.arcb.vis{display:block}
+.arcph{height:55px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.arcbd{padding:12px}
+.arctit{font-size:15px;font-weight:800;margin-bottom:3px}
+.arcco{font-size:12px;color:var(--t2);margin-bottom:6px}
+.arcdesc{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:9px}
+.arcdet{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.arcdi{font-size:11px;color:var(--t2);background:var(--card);padding:3px 8px;border-radius:20px;border:1px solid var(--bdr)}
+.arc-docs{background:rgba(202,138,4,.06);border:1px solid rgba(202,138,4,.18);border-radius:8px;padding:8px 11px;margin-bottom:9px}
+.arc-docs-t{font-size:9px;font-weight:800;color:var(--ye);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.arc-docs-l{display:flex;flex-wrap:wrap;gap:5px}
+.arc-doc{font-size:11px;color:var(--ye);background:rgba(202,138,4,.08);border:1px solid rgba(202,138,4,.2);padding:3px 9px;border-radius:20px}
+.arcc{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);border-radius:8px;padding:9px 11px;font-size:12px;color:#a78bfa;margin-bottom:10px;line-height:1.5}
+.arcact{display:flex;gap:6px;flex-wrap:wrap}
+.arcbtn{flex:1;min-width:70px;padding:8px;border-radius:8px;border:none;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.arcap{background:rgba(22,163,74,.14);color:var(--gr);border:1px solid rgba(22,163,74,.3)}
+.arcap:hover{background:rgba(22,163,74,.24)}
+.arcrej{background:rgba(220,38,38,.1);color:var(--re);border:1px solid rgba(220,38,38,.25)}
+.arcrej:hover{background:rgba(220,38,38,.2)}
+.arccb{background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.25);flex:1.5}
+.arccb:hover{background:rgba(124,58,237,.22)}
+
+/* MODALS */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--card);border:1px solid var(--bdr);border-radius:16px;width:100%;max-width:500px;overflow:hidden;animation:mi .2s ease;max-height:90vh;overflow-y:auto}
+@keyframes mi{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.mhd{padding:14px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:1}
+.mtit{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
+.mcl{width:28px;height:28px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.mcl:hover{border-color:var(--re);color:var(--re)}
+.mbd{padding:16px}
+.mci{background:var(--surf);border-radius:9px;padding:11px 13px;margin-bottom:14px}
+.mcir{display:flex;gap:6px;margin-bottom:4px}
+.mcil{color:var(--t3);min-width:70px;font-size:12px}
+.mciv{color:var(--t1);font-weight:600;font-size:12px}
+.mta{width:100%;padding:11px 13px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--t1);font-family:'Manrope',sans-serif;font-size:14px;resize:none;outline:none;line-height:1.6;transition:border-color .2s}
+.mta:focus{border-color:var(--acc)}
+.mact{display:flex;gap:9px;margin-top:13px}
+.msnd{flex:1;padding:11px;background:var(--pu);color:#fff;border:none;border-radius:9px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.msnd:hover{background:#6d28d9}
+.mcnc{padding:11px 16px;background:transparent;border:1px solid var(--bdr);border-radius:9px;color:var(--t2);font-family:'Manrope',sans-serif;font-size:13px;cursor:pointer}
+.mcnc:hover{border-color:var(--re);color:var(--re)}
+.mapci{background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:9px;padding:12px;margin-bottom:13px;font-size:13px;color:var(--gr);line-height:1.6}
+.mapbtn{flex:1;padding:11px;background:var(--gr);color:#fff;border:none;border-radius:9px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.mapbtn:hover{background:#15803d}
+
+/* EDIT MODAL */
+.edit-modal .mff{margin-bottom:12px}
+.edit-modal .mff label{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.edit-modal .mff input,.edit-modal .mff select,.edit-modal .mff textarea{width:100%;padding:10px 13px;background:var(--surf);border:1px solid var(--bdr);border-radius:9px;color:var(--t1);font-family:'Manrope',sans-serif;font-size:13px;outline:none;transition:all .2s}
+.edit-modal .mff input:focus,.edit-modal .mff select:focus,.edit-modal .mff textarea:focus{border-color:var(--acc)}
+.edit-modal .mff select option{background:var(--card)}
+.edit-modal .mff textarea{resize:none;line-height:1.6}
+.save-btn{flex:1;padding:11px;background:var(--acc);color:#fff;border:none;border-radius:9px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.save-btn:hover{background:var(--accd)}
+
+/* MSG LOG */
+.mlog{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden;margin-bottom:16px}
+.mlogh{padding:11px 13px;border-bottom:1px solid var(--bdr);font-size:12px;font-weight:700;color:var(--t2);display:flex;align-items:center;gap:5px}
+.mlogl{max-height:200px;overflow-y:auto}
+.mli{padding:9px 13px;border-bottom:1px solid var(--bdr);font-size:11px}
+.mli:last-child{border-bottom:none}
+.mlif{font-weight:700;color:#a78bfa;margin-bottom:2px}
+.mlit{color:var(--t2);line-height:1.5}
+.mlis{color:var(--t3);margin-top:2px;font-family:'JetBrains Mono',monospace;font-size:9px}
+
+/* SPORT SHEET */
+#sport-sheet{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7)}
+.sport-sheet-inner{position:absolute;bottom:var(--mob);left:0;right:0;background:var(--card);border-radius:20px 20px 0 0;padding:20px;max-height:70vh;overflow-y:auto}
+
+/* NOTIF */
+.notif{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--card2);border:1px solid var(--bdr);border-radius:11px;padding:11px 18px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.4);opacity:0;transition:all .25s;pointer-events:none;max-width:90vw;white-space:nowrap}
+.notif.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.notif.success{border-color:rgba(22,163,74,.3);color:var(--gr)}
+.notif.warn{border-color:rgba(202,138,4,.3);color:var(--ye)}
+.notif.info{border-color:rgba(37,99,235,.3);color:var(--accl)}
+.notif.error{border-color:rgba(220,38,38,.3);color:var(--re)}
+
+.empty{text-align:center;padding:48px 20px;color:var(--t3)}
+.empty .ei{font-size:40px;margin-bottom:9px}
+.empty p{font-size:13px}
+
+@media(max-width:900px){.rpanel{display:none}}
+@media(max-width:660px){.sidebar{display:none}.mob-nav{display:flex}}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">TrialZone</div>
+  <div class="nav-right">
+    <!-- LANGUAGE DROPDOWN -->
+    <div class="lang-wrap" id="lang-wrap">
+      <div class="lang-toggle" onclick="toggleLangDrop()" id="lang-toggle">
+        <span class="globe">🌐</span>
+        <span id="lang-cur">EN</span>
+        <span style="font-size:9px;color:var(--t3)">▾</span>
+      </div>
+      <div class="lang-drop" id="lang-drop">
+        <div class="lang-opt active" onclick="setLang('en',this,'EN')"><span class="lfl">🇬🇧</span> English</div>
+        <div class="lang-opt" onclick="setLang('hi',this,'हिं')"><span class="lfl">🇮🇳</span> हिंदी</div>
+        <div class="lang-opt" onclick="setLang('ta',this,'தமிழ்')"><span class="lfl">🇮🇳</span> தமிழ்</div>
+        <div class="lang-opt" onclick="setLang('mr',this,'मराठी')"><span class="lfl">🇮🇳</span> मराठी</div>
+        <div class="lang-opt" onclick="setLang('te',this,'తెలుగు')"><span class="lfl">🇮🇳</span> తెలుగు</div>
+      </div>
+    </div>
+    <div class="uav-wrap" id="nav-uav-wrap" style="display:none">
+      <div class="uav" id="nav-av"></div>
+      <span id="nav-nm" style="font-size:12px;font-weight:700;display:none"></span>
+      <span class="rpill" id="nav-rp"></span>
+    </div>
+    <div class="nibn" id="bell-btn" onclick="toggleMsgs()" style="display:none">🔔<span class="bdot" id="bdot" style="display:none"></span></div>
+    <button class="out-btn" id="out-btn" onclick="doLogout()" style="display:none" data-t="logout">Logout</button>
+  </div>
+</nav>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="logo-txt">TrialZone</div>
+      <div class="logo-sub" data-t="tagline">Sports Trial Platform</div>
+    </div>
+    <div class="lcard">
+      <div class="role-tabs">
+        <button class="rtab active coach" onclick="selRole('coach')" id="tab-coach"><span class="ri">🏅</span><span data-t="role_coach">Coach</span></button>
+        <button class="rtab player" onclick="selRole('player')" id="tab-player"><span class="ri">⚡</span><span data-t="role_player">Player</span></button>
+      </div>
+      <div class="fld"><label data-t="full_name">Full Name</label><input type="text" id="l-name" data-ph="name_ph"/></div>
+      <div class="fld" id="l-club-w"><label data-t="club">Club / Academy</label><input type="text" id="l-club" data-ph="club_ph"/></div>
+      <div class="fld" id="l-sport-w" style="display:none"><label data-t="primary_sport">Primary Sport</label>
+        <select id="l-sport"><option>Football</option><option>Basketball</option><option>Cricket</option><option>Athletics</option><option>Badminton</option><option>Swimming</option><option>Tennis</option><option>Hockey</option></select>
+      </div>
+      <button class="lbtn cb" id="lbtn" onclick="doLogin()"><span data-t="enter_coach">Enter as Coach →</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="mover" id="cm-modal" style="display:none" onclick="closeMod('cm-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhd"><div class="mtit">📧 <span data-t="contact_coach">Contact Coach</span></div><button class="mcl" onclick="closeMod('cm-modal')">✕</button></div>
+    <div class="mbd">
+      <div class="mci" id="m-cinfo"></div>
+      <label style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px" data-t="msg_label">Message to Coach</label>
+      <textarea class="mta" id="m-msg" rows="5" data-ph="msg_ph"></textarea>
+      <div class="mact">
+        <button class="mcnc" onclick="closeMod('cm-modal')" data-t="cancel">Cancel</button>
+        <button class="msnd" onclick="sendMsg()" data-t="send_msg">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APPROVE MODAL -->
+<div class="mover" id="ap-modal" style="display:none" onclick="closeMod('ap-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhd"><div class="mtit">✅ <span data-t="approve_title">Approve & Publish</span></div><button class="mcl" onclick="closeMod('ap-modal')">✕</button></div>
+    <div class="mbd">
+      <div class="mapci" id="ap-info"></div>
+      <label style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px" data-t="approval_note">Approval Note (optional)</label>
+      <textarea class="mta" id="ap-note" rows="3" data-ph="note_ph"></textarea>
+      <div class="mact">
+        <button class="mcnc" onclick="closeMod('ap-modal')" data-t="cancel">Cancel</button>
+        <button class="mapbtn" onclick="doApprove()" data-t="publish_trial">Publish Trial ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="mover" id="rj-modal" style="display:none" onclick="closeMod('rj-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhd"><div class="mtit">❌ <span data-t="reject_title">Reject Trial</span></div><button class="mcl" onclick="closeMod('rj-modal')">✕</button></div>
+    <div class="mbd">
+      <p style="font-size:13px;color:var(--t2);margin-bottom:13px;line-height:1.6" data-t="reject_desc">Please provide a reason. It will be sent to the coach.</p>
+      <textarea class="mta" id="rj-reason" rows="4" data-ph="reason_ph"></textarea>
+      <div class="mact">
+        <button class="mcnc" onclick="closeMod('rj-modal')" data-t="cancel">Cancel</button>
+        <button style="flex:1;padding:11px;background:rgba(220,38,38,.15);color:var(--re);border:1px solid rgba(220,38,38,.3);border-radius:9px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer" onclick="doReject()" data-t="reject_btn">Reject</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL (owner only) -->
+<div class="mover" id="edit-modal" style="display:none" onclick="closeMod('edit-modal')">
+  <div class="modal edit-modal" onclick="event.stopPropagation()">
+    <div class="mhd"><div class="mtit">✏️ Edit Trial</div><button class="mcl" onclick="closeMod('edit-modal')">✕</button></div>
+    <div class="mbd">
+      <div class="mff"><label>Trial Title</label><input type="text" id="e-title"/></div>
+      <div class="mff"><label>Description</label><textarea id="e-desc" rows="3"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="mff"><label>Date</label><input type="text" id="e-date"/></div>
+        <div class="mff"><label>Time</label><input type="text" id="e-time"/></div>
+      </div>
+      <div class="mff"><label>Location</label><input type="text" id="e-loc"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="mff"><label>Slots</label><input type="number" id="e-slots" min="1"/></div>
+        <div class="mff"><label>Status</label>
+          <select id="e-status"><option value="open">Open</option><option value="upcoming">Upcoming</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="mff"><label>Phone</label><input type="text" id="e-phone"/></div>
+        <div class="mff"><label>WhatsApp</label><input type="text" id="e-wa"/></div>
+      </div>
+      <div class="mff"><label>Email</label><input type="text" id="e-email"/></div>
+      <div class="mff"><label>What to Bring</label><input type="text" id="e-bring"/></div>
+      <div class="mff"><label>What Selected Players Get</label><input type="text" id="e-offer"/></div>
+      <div class="mff"><label>Notes</label><textarea id="e-notes" rows="2"></textarea></div>
+      <div class="mff"><label>Approved</label>
+        <select id="e-approved"><option value="1">Yes (Live)</option><option value="0">No (Pending)</option></select>
+      </div>
+      <div class="mact">
+        <button class="mcnc" onclick="closeMod('edit-modal')">Cancel</button>
+        <button class="save-btn" onclick="saveEdit()">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="app-wrap">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div style="margin-bottom:20px">
+        <div class="slbl" data-t="navigate">Navigate</div>
+        <div class="si active" onclick="setNav('feed',this)"><span class="sico">🏠</span><span data-t="feed">Feed</span></div>
+        <div class="si" onclick="setNav('mine',this)"><span class="sico">📋</span><span id="si-mine-lbl" data-t="my_apps">My Applications</span></div>
+        <div class="si" onclick="setNav('open',this)"><span class="sico">🟢</span><span data-t="open_trials">Open Trials</span></div>
+        <div class="si" onclick="setNav('upcoming',this)"><span class="sico">📅</span><span data-t="upcoming">Upcoming</span></div>
+        <!-- Admin tab — only shown when logged in as admin -->
+        <div class="si" id="si-admin" style="display:none" onclick="setNav('admin',this)">
+          <span class="sico">🛡️</span><span data-t="admin_review">Admin Review</span>
+          <span class="scnt pnd" id="si-pcount">0</span>
+        </div>
+      </div>
+      <div>
+        <div class="slbl" data-t="sport_filter">Sport</div>
+        <div id="sport-list"></div>
+      </div>
+    </aside>
+
+    <!-- FEED -->
+    <main class="feed-area">
+      <div id="admin-panel" style="display:none">
+        <div class="aph">
+          <div class="apt">🛡️ <span data-t="pending_approvals">Pending Approvals</span> <span class="pcb" id="ap-num">0</span></div>
+        </div>
+        <div class="acw" id="acw-list"></div>
+      </div>
+      <div id="msgs-wrap" style="display:none;margin-bottom:16px">
+        <div class="mlog">
+          <div class="mlogh">📬 <span data-t="messages_log">Messages</span></div>
+          <div class="mlogl" id="msgs-list"></div>
+        </div>
+      </div>
+
+      <!-- POST FORM (coaches only) -->
+      <div class="pfw" id="coach-pf" style="display:none">
+        <div class="pfhdr">
+          <div class="pftit">📢 <span data-t="post_trial">Post a Trial</span></div>
+          <div style="display:flex;gap:7px">
+            <button class="exbtn cnc" id="cancelbtn" onclick="toggleForm(false)" style="display:none" data-t="cancel">Cancel</button>
+            <button class="exbtn" onclick="toggleForm(true)">+ <span data-t="new_trial">New Trial</span></button>
+          </div>
+        </div>
+        <div class="pfbody" id="pfbody">
+
+          <!-- BANNER -->
+          <div class="bua" id="bua" onclick="document.getElementById('banner-inp').click()">
+            <div class="bph"><div class="bico">🖼️</div>
+              <div class="bh1" data-t="banner_hint">Click to upload trial banner</div>
+              <div class="bh2" data-t="banner_hint2">Optional · JPG or PNG</div>
+            </div>
+            <img class="bprev" id="bprev"/>
+            <button class="bchg" onclick="event.stopPropagation();document.getElementById('banner-inp').click()" data-t="change">Change</button>
+          </div>
+          <input type="file" id="banner-inp" accept="image/*" onchange="handleBanner(event)"/>
+
+          <!-- REQUIRED -->
+          <div class="fg2" style="margin-bottom:13px">
+            <div class="ff"><label><span data-t="trial_title">Trial Title</span><span class="req">*</span></label><input type="text" id="f-title" data-ph="title_ph"/></div>
+            <div class="ff"><label data-t="sport">Sport</label>
+              <select id="f-sport" onchange="updateSkills()">
+                <option>Football</option><option>Basketball</option><option>Cricket</option>
+                <option>Athletics</option><option>Badminton</option><option>Swimming</option>
+                <option>Tennis</option><option>Hockey</option>
+              </select>
+            </div>
+          </div>
+          <div class="ff"><label data-t="description">Description</label><textarea id="f-desc" rows="3" data-ph="desc_ph"></textarea></div>
+
+          <!-- OPTIONAL DETAILS -->
+          <div class="fsec" data-t="details_sec">📋 Trial Details <span style="font-size:10px;color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <div class="fg2">
+            <div class="ff"><label data-t="trial_date">Date</label><input type="text" id="f-date" data-ph="date_ph"/></div>
+            <div class="ff"><label data-t="trial_time">Time</label><input type="text" id="f-time" data-ph="time_ph"/></div>
+          </div>
+          <div class="fg2">
+            <div class="ff"><label data-t="location">Location</label><input type="text" id="f-loc" data-ph="loc_ph"/></div>
+            <div class="ff"><label data-t="slots">Slots</label><input type="number" id="f-slots" data-ph="slots_ph" min="1"/></div>
+          </div>
+          <div class="fg2">
+            <div class="ff"><label data-t="age_group">Age Group</label><input type="text" id="f-age" data-ph="age_ph"/></div>
+            <div class="ff"><label data-t="status">Status</label>
+              <select id="f-status"><option value="open" data-t="open_now">Open Now</option><option value="upcoming" data-t="upcoming_s">Upcoming</option></select>
+            </div>
+          </div>
+          <div class="fg2">
+            <div class="ff"><label data-t="level">Level</label>
+              <select id="f-level"><option value="">Any Level</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Elite / Semi-Pro</option></select>
+            </div>
+            <div class="ff"><label data-t="gender">Gender</label>
+              <select id="f-gender"><option>Open to All</option><option>Male Only</option><option>Female Only</option></select>
+            </div>
+          </div>
+
+          <!-- SKILLS -->
+          <div class="ff"><label data-t="skills_label">Skills Assessed</label><div class="cpg" id="skills-wrap"></div></div>
+
+          <!-- DOCS -->
+          <div class="fsec" data-t="docs_sec">📄 Documents Required <span style="font-size:10px;color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <div class="doc-grid" id="doc-grid"></div>
+          <div class="fg2">
+            <div class="ff"><label data-t="custom_doc">Custom Doc</label><input type="text" id="f-cdoc" data-ph="cdoc_ph"/></div>
+            <div class="ff"><label data-t="doc_note">Doc Note</label><input type="text" id="f-docnote" data-ph="docnote_ph"/></div>
+          </div>
+
+          <!-- CONTACT -->
+          <div class="fsec" data-t="contact_sec">📞 Contact <span style="font-size:10px;color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <div class="fg2">
+            <div class="ff"><label data-t="phone">Phone</label><input type="tel" id="f-phone" data-ph="phone_ph"/></div>
+            <div class="ff"><label data-t="whatsapp">WhatsApp</label><input type="tel" id="f-wa" data-ph="wa_ph"/></div>
+          </div>
+          <div class="fg2">
+            <div class="ff"><label data-t="email">Email</label><input type="email" id="f-email" data-ph="email_ph"/></div>
+            <div class="ff"><label data-t="bring">What to Bring</label><input type="text" id="f-bring" data-ph="bring_ph"/></div>
+          </div>
+          <div class="ff"><label data-t="offer">What Selected Players Get</label><input type="text" id="f-offer" data-ph="offer_ph"/></div>
+          <div class="ff"><label data-t="notes">Notes</label><textarea id="f-notes" rows="2" data-ph="notes_ph"></textarea></div>
+
+          <button class="sub-btn" onclick="submitTrial()">🚀 <span data-t="submit_review">Submit for Review</span></button>
+          <div class="pnote">⏳ <span data-t="pending_note">Your trial will be reviewed by admin before going live.</span></div>
+        </div>
+      </div>
+
+      <div class="fbar" id="fbar">
+        <button class="fchip active" onclick="setChip('all',this)" data-t="all">All</button>
+        <button class="fchip" onclick="setChip('open',this)" data-t="open">Open</button>
+        <button class="fchip" onclick="setChip('upcoming',this)" data-t="upcoming_s">Upcoming</button>
+        <button class="fchip" onclick="setChip('closed',this)" data-t="closed">Closed</button>
+      </div>
+      <div id="feed"></div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="rpanel">
+      <div class="rpsc">
+        <div class="rpt" data-t="platform_stats">Stats</div>
+        <div class="sgrid">
+          <div class="sb2"><div class="snum" id="st-a">0</div><div class="slb" data-t="active_t">Active</div></div>
+          <div class="sb2"><div class="snum" id="st-c">0</div><div class="slb" data-t="coaches_t">Coaches</div></div>
+          <div class="sb2"><div class="snum" id="st-ap">0</div><div class="slb" data-t="apps_t">Applied</div></div>
+          <div class="sb2"><div class="snum" id="st-p">0</div><div class="slb" data-t="pending_t">Pending</div></div>
+        </div>
+      </div>
+      <div class="rpsc">
+        <div class="rpt" data-t="coaches_panel">Coaches</div>
+        <div id="rp-coaches"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <nav class="mob-nav" id="mob-nav">
+    <button class="mni active" id="mni-feed" onclick="mobNav('feed',this)"><span class="mnico">🏠</span><span data-t="feed">Feed</span></button>
+    <button class="mni" id="mni-mine" onclick="mobNav('mine',this)"><span class="mnico">📋</span><span data-t="mine">Mine</span></button>
+    <button class="mni" id="mni-post" onclick="mobNav('post',this)" style="display:none"><span class="mnico">➕</span><span data-t="post">Post</span></button>
+    <button class="mni" id="mni-admin" onclick="mobNav('admin',this)" style="display:none"><span class="mnico">🛡️</span><span data-t="review">Review</span><span class="mob-badge" id="mob-badge" style="display:none">0</span></button>
+    <button class="mni" onclick="toggleSportSheet()"><span class="mnico">🔍</span><span data-t="filter">Filter</span></button>
+  </nav>
+
+  <!-- SPORT SHEET -->
+  <div id="sport-sheet" onclick="toggleSportSheet()">
+    <div class="sport-sheet-inner" onclick="event.stopPropagation()">
+      <div style="width:40px;height:4px;background:var(--bdr2);border-radius:2px;margin:0 auto 16px"></div>
+      <div style="font-size:14px;font-weight:800;margin-bottom:14px" data-t="sport_filter">Filter by Sport</div>
+      <div id="sport-sheet-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+// ── OWNER SECRET ──
+// Change this to your own secret password — only YOU know it
+const OWNER_SECRET = 'trialzone2026';
+const ADMIN_KEY    = 'admin123';  // coaches/public admin key stays hidden (not shown as a login tab)
+
+// ── TRANSLATIONS ──
+const T={
+en:{tagline:'Sports Trial Platform',role_coach:'Coach',role_player:'Player',full_name:'Full Name',club:'Club / Academy',primary_sport:'Primary Sport',enter_coach:'Enter as Coach →',enter_player:'Enter as Player →',logout:'Logout',navigate:'Navigate',feed:'Feed',my_apps:'My Applications',my_posts:'My Posted Trials',open_trials:'Open Trials',upcoming:'Upcoming',admin_review:'Admin Review',sport_filter:'Sport',all_sports:'All Sports',post_trial:'Post a Trial',new_trial:'New Trial',cancel:'Cancel',banner_hint:'Click to upload trial banner',banner_hint2:'Optional · JPG or PNG',change:'Change',trial_title:'Trial Title',sport:'Sport',description:'Description',details_sec:'Trial Details',trial_date:'Date',trial_time:'Time',location:'Location',slots:'Slots',age_group:'Age Group',status:'Status',open_now:'Open Now',upcoming_s:'Upcoming',level:'Level',gender:'Gender',skills_label:'Skills Assessed',docs_sec:'Documents Required',custom_doc:'Custom Doc',doc_note:'Doc Note',contact_sec:'Contact',phone:'Phone',whatsapp:'WhatsApp',email:'Email',bring:'What to Bring',offer:'What Selected Players Get',notes:'Notes',submit_review:'Submit for Review',pending_note:'Your trial will be reviewed by admin before going live.',all:'All',open:'Open',closed:'Closed',platform_stats:'Stats',active_t:'Active',coaches_t:'Coaches',apps_t:'Applied',pending_t:'Pending',coaches_panel:'Coaches',pending_approvals:'Pending Approvals',contact_coach:'Contact Coach',msg_label:'Message to Coach',send_msg:'Send Message →',approve_title:'Approve & Publish',approval_note:'Approval Note (optional)',publish_trial:'Publish Trial ✓',reject_title:'Reject Trial',reject_desc:'Please provide a reason.',reject_btn:'Reject',messages_log:'Messages',docs_req_label:'Documents Required',apply_now:'Apply Now',applied:'✓ Applied',closed_t:'Closed',close_trial:'Close Trial',mine:'Mine',post:'Post',review:'Review',filter:'Filter',if_sel:'If selected:',bring_lbl:'Bring:',name_ph:'e.g. Rahul Sharma',club_ph:'e.g. FC Mumbai Academy',title_ph:'e.g. U-17 Striker Trials',date_ph:'e.g. Mar 20, 2026',time_ph:'e.g. 9:00 AM',loc_ph:'e.g. Mumbai Football Ground',slots_ph:'e.g. 15',desc_ph:'Describe the trial…',age_ph:'e.g. U-17 / 16–22',bring_ph:'e.g. Boots, kit, water, ID',offer_ph:'e.g. Academy contract, coaching',notes_ph:'Fee, format, other info…',phone_ph:'+91 98765 43210',wa_ph:'+91 98765 43210',email_ph:'coach@club.com',cdoc_ph:'e.g. Medical certificate',docnote_ph:'e.g. Originals required',msg_ph:'Write your message…',note_ph:'Optional note…',reason_ph:'Reason for rejection…'},
+
+hi:{tagline:'स्पोर्ट्स ट्रायल प्लेटफॉर्म',role_coach:'कोच',role_player:'खिलाड़ी',full_name:'पूरा नाम',club:'क्लब / अकादमी',primary_sport:'मुख्य खेल',enter_coach:'कोच के रूप में →',enter_player:'खिलाड़ी के रूप में →',logout:'लॉग आउट',navigate:'मेनू',feed:'फ़ीड',my_apps:'मेरे आवेदन',my_posts:'मेरी ट्रायल',open_trials:'खुले ट्रायल',upcoming:'आगामी',admin_review:'एडमिन समीक्षा',sport_filter:'खेल',all_sports:'सभी खेल',post_trial:'ट्रायल पोस्ट करें',new_trial:'नई ट्रायल',cancel:'रद्द करें',banner_hint:'बैनर अपलोड करें',banner_hint2:'वैकल्पिक · JPG या PNG',change:'बदलें',trial_title:'ट्रायल शीर्षक',sport:'खेल',description:'विवरण',details_sec:'ट्रायल विवरण',trial_date:'तारीख',trial_time:'समय',location:'स्थान',slots:'सीटें',age_group:'आयु वर्ग',status:'स्थिति',open_now:'अभी खुला',upcoming_s:'आगामी',level:'स्तर',gender:'लिंग',skills_label:'कौशल',docs_sec:'दस्तावेज़',custom_doc:'कस्टम दस्तावेज़',doc_note:'नोट',contact_sec:'संपर्क',phone:'फोन',whatsapp:'व्हाट्सएप',email:'ईमेल',bring:'क्या लाएं',offer:'चयन पर मिलेगा',notes:'नोट्स',submit_review:'समीक्षा के लिए भेजें',pending_note:'ट्रायल एडमिन की मंजूरी के बाद लाइव होगी।',all:'सभी',open:'खुला',closed:'बंद',platform_stats:'आंकड़े',active_t:'सक्रिय',coaches_t:'कोच',apps_t:'आवेदन',pending_t:'लंबित',coaches_panel:'कोच',pending_approvals:'लंबित अनुमोदन',contact_coach:'कोच से संपर्क',msg_label:'कोच को संदेश',send_msg:'संदेश भेजें →',approve_title:'अनुमोदित करें',approval_note:'नोट (वैकल्पिक)',publish_trial:'प्रकाशित करें ✓',reject_title:'अस्वीकार करें',reject_desc:'कारण बताएं।',reject_btn:'अस्वीकार',messages_log:'संदेश',docs_req_label:'आवश्यक दस्तावेज़',apply_now:'आवेदन करें',applied:'✓ आवेदित',closed_t:'बंद',close_trial:'बंद करें',mine:'मेरा',post:'पोस्ट',review:'समीक्षा',filter:'फ़िल्टर',if_sel:'चयन पर:',bring_lbl:'लाएं:',name_ph:'जैसे: राहुल शर्मा',club_ph:'जैसे: FC मुंबई',title_ph:'जैसे: U-17 ट्रायल',date_ph:'जैसे: 20 मार्च 2026',time_ph:'जैसे: सुबह 9:00',loc_ph:'जैसे: मुंबई मैदान',slots_ph:'जैसे: 15',desc_ph:'ट्रायल का विवरण…',age_ph:'जैसे: U-17',bring_ph:'जैसे: जूते, किट, ID',offer_ph:'जैसे: अनुबंध, कोचिंग',notes_ph:'शुल्क, प्रारूप…',phone_ph:'+91 98765 43210',wa_ph:'+91 98765 43210',email_ph:'coach@club.com',cdoc_ph:'जैसे: मेडिकल सर्टिफिकेट',docnote_ph:'जैसे: मूल आवश्यक',msg_ph:'संदेश लिखें…',note_ph:'नोट…',reason_ph:'कारण…'},
+
+ta:{tagline:'விளையாட்டு சோதனை தளம்',role_coach:'பயிற்சியாளர்',role_player:'வீரர்',full_name:'முழு பெயர்',club:'கிளப் / அகாடமி',primary_sport:'முதன்மை விளையாட்டு',enter_coach:'பயிற்சியாளராக →',enter_player:'வீரராக →',logout:'வெளியேறு',navigate:'வழிசெலுத்தல்',feed:'ஊட்டம்',my_apps:'என் விண்ணப்பங்கள்',my_posts:'என் சோதனைகள்',open_trials:'திறந்த சோதனைகள்',upcoming:'வரவிருக்கும்',admin_review:'நிர்வாக ஆய்வு',sport_filter:'விளையாட்டு',all_sports:'அனைத்தும்',post_trial:'சோதனை போடு',new_trial:'புதிய சோதனை',cancel:'ரத்து',banner_hint:'பேனர் பதிவேற்றவும்',banner_hint2:'விரும்பினால் · JPG அல்லது PNG',change:'மாற்று',trial_title:'சோதனை தலைப்பு',sport:'விளையாட்டு',description:'விளக்கம்',details_sec:'சோதனை விவரங்கள்',trial_date:'தேதி',trial_time:'நேரம்',location:'இடம்',slots:'இடங்கள்',age_group:'வயது குழு',status:'நிலை',open_now:'திறந்தது',upcoming_s:'வரவிருக்கும்',level:'நிலை',gender:'பாலினம்',skills_label:'திறன்கள்',docs_sec:'ஆவணங்கள்',custom_doc:'தனிப்பயன் ஆவணம்',doc_note:'குறிப்பு',contact_sec:'தொடர்பு',phone:'தொலைபேசி',whatsapp:'வாட்ஸ்அப்',email:'மின்னஞ்சல்',bring:'என்ன கொண்டு வர',offer:'தேர்ந்தெடுக்கப்பட்டால்',notes:'குறிப்புகள்',submit_review:'மதிப்பாய்விற்கு அனுப்பு',pending_note:'நிர்வாக அங்கீகாரத்திற்கு பிறகு வெளியிடப்படும்.',all:'அனைத்தும்',open:'திறந்த',closed:'மூடப்பட்டது',platform_stats:'புள்ளிவிவரங்கள்',active_t:'செயலில்',coaches_t:'பயிற்சியாளர்கள்',apps_t:'விண்ணப்பங்கள்',pending_t:'நிலுவை',coaches_panel:'பயிற்சியாளர்கள்',pending_approvals:'நிலுவை அனுமதிகள்',contact_coach:'கோச்சை தொடர்பு கொள்',msg_label:'செய்தி',send_msg:'அனுப்பு →',approve_title:'அங்கீகரி',approval_note:'குறிப்பு',publish_trial:'வெளியிடு ✓',reject_title:'நிராகரி',reject_desc:'காரணம் கொடு.',reject_btn:'நிராகரி',messages_log:'செய்திகள்',docs_req_label:'தேவையான ஆவணங்கள்',apply_now:'விண்ணப்பி',applied:'✓ விண்ணப்பித்தது',closed_t:'மூடப்பட்டது',close_trial:'மூடு',mine:'என்னுடையது',post:'பதிவு',review:'ஆய்வு',filter:'வடிகட்டி',if_sel:'தேர்ந்தெடுக்கப்பட்டால்:',bring_lbl:'கொண்டு வா:',name_ph:'ரா. ஷர்மா',club_ph:'FC மும்பை',title_ph:'U-17 சோதனை',date_ph:'மார்ச் 20, 2026',time_ph:'காலை 9:00',loc_ph:'மும்பை மைதானம்',slots_ph:'15',desc_ph:'சோதனை விவரங்கள்…',age_ph:'U-17',bring_ph:'பூட்ஸ், கிட், ID',offer_ph:'ஒப்பந்தம், பயிற்சி',notes_ph:'கட்டணம்…',phone_ph:'+91 98765 43210',wa_ph:'+91 98765 43210',email_ph:'coach@club.com',cdoc_ph:'மருத்துவ சான்றிதழ்',docnote_ph:'நகல் தேவை',msg_ph:'செய்தி…',note_ph:'குறிப்பு…',reason_ph:'காரணம்…'},
+
+mr:{tagline:'स्पोर्ट्स ट्रायल प्लॅटफॉर्म',role_coach:'प्रशिक्षक',role_player:'खेळाडू',full_name:'पूर्ण नाव',club:'क्लब / अकादमी',primary_sport:'प्राथमिक खेळ',enter_coach:'प्रशिक्षक म्हणून →',enter_player:'खेळाडू म्हणून →',logout:'बाहेर पडा',navigate:'नेव्हिगेट',feed:'फीड',my_apps:'माझे अर्ज',my_posts:'माझ्या ट्रायल',open_trials:'खुल्या ट्रायल',upcoming:'आगामी',admin_review:'प्रशासक पुनरावलोकन',sport_filter:'खेळ',all_sports:'सर्व खेळ',post_trial:'ट्रायल पोस्ट करा',new_trial:'नवीन ट्रायल',cancel:'रद्द करा',banner_hint:'बॅनर अपलोड करा',banner_hint2:'पर्यायी · JPG किंवा PNG',change:'बदला',trial_title:'ट्रायल शीर्षक',sport:'खेळ',description:'वर्णन',details_sec:'ट्रायल तपशील',trial_date:'तारीख',trial_time:'वेळ',location:'ठिकाण',slots:'जागा',age_group:'वयोगट',status:'स्थिती',open_now:'आता खुले',upcoming_s:'आगामी',level:'पातळी',gender:'लिंग',skills_label:'कौशल्ये',docs_sec:'कागदपत्रे',custom_doc:'कस्टम कागदपत्र',doc_note:'टीप',contact_sec:'संपर्क',phone:'फोन',whatsapp:'व्हॉट्सअॅप',email:'ईमेल',bring:'काय आणायचे',offer:'निवडीवर काय मिळेल',notes:'टिपा',submit_review:'सबमिट करा',pending_note:'प्रशासकाच्या मंजुरीनंतर प्रकाशित होईल.',all:'सर्व',open:'खुले',closed:'बंद',platform_stats:'आकडेवारी',active_t:'सक्रिय',coaches_t:'प्रशिक्षक',apps_t:'अर्ज',pending_t:'प्रलंबित',coaches_panel:'प्रशिक्षक',pending_approvals:'प्रलंबित मंजूरी',contact_coach:'संपर्क करा',msg_label:'संदेश',send_msg:'पाठवा →',approve_title:'मंजूर करा',approval_note:'टीप',publish_trial:'प्रकाशित करा ✓',reject_title:'नाकारा',reject_desc:'कारण द्या.',reject_btn:'नाकारा',messages_log:'संदेश',docs_req_label:'आवश्यक कागदपत्रे',apply_now:'अर्ज करा',applied:'✓ अर्ज केला',closed_t:'बंद',close_trial:'बंद करा',mine:'माझे',post:'पोस्ट',review:'पुनरावलोकन',filter:'फिल्टर',if_sel:'निवडीवर:',bring_lbl:'आणा:',name_ph:'उदा: राहुल',club_ph:'उदा: FC मुंबई',title_ph:'उदा: U-17 ट्रायल',date_ph:'उदा: 20 मार्च 2026',time_ph:'उदा: सकाळी 9:00',loc_ph:'उदा: मुंबई मैदान',slots_ph:'उदा: 15',desc_ph:'ट्रायल वर्णन…',age_ph:'उदा: U-17',bring_ph:'उदा: बूट, किट, ID',offer_ph:'उदा: करार, प्रशिक्षण',notes_ph:'शुल्क, प्रारूप…',phone_ph:'+91 98765 43210',wa_ph:'+91 98765 43210',email_ph:'coach@club.com',cdoc_ph:'वैद्यकीय प्रमाणपत्र',docnote_ph:'मूळ आवश्यक',msg_ph:'संदेश…',note_ph:'टीप…',reason_ph:'कारण…'},
+
+te:{tagline:'స్పోర్ట్స్ ట్రయల్ ప్లాట్‌ఫారమ్',role_coach:'కోచ్',role_player:'ఆటగాడు',full_name:'పూర్తి పేరు',club:'క్లబ్ / అకాడమీ',primary_sport:'ప్రాథమిక క్రీడ',enter_coach:'కోచ్‌గా →',enter_player:'ఆటగాడిగా →',logout:'లాగ్ అవుట్',navigate:'నావిగేట్',feed:'ఫీడ్',my_apps:'నా దరఖాస్తులు',my_posts:'నా ట్రయల్స్',open_trials:'తెరిచిన ట్రయల్స్',upcoming:'రాబోవు',admin_review:'అడ్మిన్ సమీక్ష',sport_filter:'క్రీడ',all_sports:'అన్నీ',post_trial:'ట్రయల్ పోస్ట్ చేయి',new_trial:'కొత్త ట్రయల్',cancel:'రద్దు',banner_hint:'బ్యానర్ అప్‌లోడ్ చేయి',banner_hint2:'ఐచ్ఛికం · JPG లేదా PNG',change:'మార్చు',trial_title:'ట్రయల్ శీర్షిక',sport:'క్రీడ',description:'వివరణ',details_sec:'ట్రయల్ వివరాలు',trial_date:'తేదీ',trial_time:'సమయం',location:'స్థలం',slots:'స్లాట్స్',age_group:'వయసు',status:'స్థితి',open_now:'తెరిచింది',upcoming_s:'రాబోవు',level:'స్థాయి',gender:'లింగం',skills_label:'నైపుణ్యాలు',docs_sec:'పత్రాలు',custom_doc:'కస్టమ్ పత్రం',doc_note:'గమనిక',contact_sec:'పరిచయం',phone:'ఫోన్',whatsapp:'వాట్సాప్',email:'ఈమెయిల్',bring:'ఏం తీసుకు రావాలి',offer:'ఎంపికైతే ఏం లభిస్తుంది',notes:'గమనికలు',submit_review:'సమర్పించు',pending_note:'అడ్మిన్ సమీక్ష తర్వాత ప్రచురించబడుతుంది.',all:'అన్నీ',open:'తెరిచింది',closed:'మూసింది',platform_stats:'గణాంకాలు',active_t:'చురుకు',coaches_t:'కోచులు',apps_t:'దరఖాస్తులు',pending_t:'పెండింగ్',coaches_panel:'కోచులు',pending_approvals:'పెండింగ్ ఆమోదాలు',contact_coach:'కోచ్‌ని సంప్రదించు',msg_label:'సందేశం',send_msg:'పంపు →',approve_title:'ఆమోదించు',approval_note:'గమనిక',publish_trial:'ప్రచురించు ✓',reject_title:'తిరస్కరించు',reject_desc:'కారణం తెలపండి.',reject_btn:'తిరస్కరించు',messages_log:'సందేశాలు',docs_req_label:'అవసరమైన పత్రాలు',apply_now:'దరఖాస్తు',applied:'✓ దరఖాస్తు',closed_t:'మూసింది',close_trial:'మూసివేయి',mine:'నా',post:'పోస్ట్',review:'సమీక్ష',filter:'ఫిల్టర్',if_sel:'ఎంపికైతే:',bring_lbl:'తీసుకు రా:',name_ph:'రాహుల్ శర్మ',club_ph:'FC ముంబై',title_ph:'U-17 ట్రయల్',date_ph:'మార్చి 20, 2026',time_ph:'ఉదయం 9:00',loc_ph:'ముంబై స్టేడియం',slots_ph:'15',desc_ph:'ట్రయల్ వివరాలు…',age_ph:'U-17',bring_ph:'బూట్లు, కిట్, ID',offer_ph:'ఒప్పందం, కోచింగ్',notes_ph:'రుసుము…',phone_ph:'+91 98765 43210',wa_ph:'+91 98765 43210',email_ph:'coach@club.com',cdoc_ph:'వైద్య సర్టిఫికెట్',docnote_ph:'అసలు అవసరం',msg_ph:'సందేశం…',note_ph:'గమనిక…',reason_ph:'తిరస్కరణ కారణం…'}
+};
+
+const DOCS=[
+  {id:'aadhar',icon:'🪪',label:'Aadhar Card'},
+  {id:'birth',icon:'📋',label:'Birth Certificate'},
+  {id:'school',icon:'🏫',label:'School / College ID'},
+  {id:'photo',icon:'📷',label:'Passport Photos (2)'},
+  {id:'medical',icon:'🏥',label:'Medical Certificate'},
+  {id:'noc',icon:'📝',label:'NOC from Previous Club'},
+  {id:'address',icon:'🏠',label:'Address Proof'},
+  {id:'passport',icon:'🛂',label:'Passport / Visa'},
+  {id:'insurance',icon:'🛡️',label:'Sports Insurance'},
+  {id:'consent',icon:'✍️',label:'Parent/Guardian Consent'},
+  {id:'academic',icon:'📚',label:'Academic Records'},
+  {id:'sports_id',icon:'🏅',label:'Sports Quota ID'},
+];
+
+const SC={Football:'#2563eb',Basketball:'#ea580c',Cricket:'#16a34a',Athletics:'#ca8a04',Badminton:'#dc2626',Swimming:'#7c3aed',Tennis:'#0d9488',Hockey:'#c2410c'};
+const SI={Football:'⚽',Basketball:'🏀',Cricket:'🏏',Athletics:'🏃',Badminton:'🏸',Swimming:'🏊',Tennis:'🎾',Hockey:'🏑'};
+const SKILLS={Football:['Dribbling','Finishing','Pace','Passing','Tackling','Headers'],Basketball:['Ball Handling','Shooting','Defense','Rebounds','Court Vision'],Cricket:['Batting','Bowling','Fielding','Pace','Spin','Technique'],Athletics:['Sprint','Endurance','Long Jump','Shot Put','Hurdles'],Badminton:['Smash','Defense','Net Play','Footwork','Serve'],Swimming:['Freestyle','Butterfly','Backstroke','Turns','Endurance'],Tennis:['Forehand','Backhand','Serve','Volley','Footwork'],Hockey:['Dribbling','Shooting','Defense','Passing','Stamina']};
+
+// ── STATE ──
+let curLang='en',cu=null,selRole_='coach',navF='feed',chipF='all',sportF='all';
+let bannerUrl=null,selSkills=[],selDocs=[],msgs=[],followed=[],tid=null,editTid=null;
+
+const L=()=>T[curLang];
+
+// ── LANG ──
+function toggleLangDrop(){document.getElementById('lang-drop').classList.toggle('open')}
+document.addEventListener('click',e=>{if(!document.getElementById('lang-wrap').contains(e.target))document.getElementById('lang-drop').classList.remove('open')});
+function setLang(lang,el,label){
+  curLang=lang;
+  document.getElementById('lang-cur').textContent=label;
+  document.querySelectorAll('.lang-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lang-drop').classList.remove('open');
+  applyT();
+  if(cu)reRenderAll();
+}
+function applyT(){
+  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.getAttribute('data-t');if(L()[k])el.textContent=L()[k];});
+  document.querySelectorAll('[data-ph]').forEach(el=>{const k=el.getAttribute('data-ph');if(L()[k])el.placeholder=L()[k];});
+}
+
+// ── LOGIN ──
+function selRole(r){
+  selRole_=r;
+  ['coach','player'].forEach(x=>document.getElementById('tab-'+x).className='rtab '+x);
+  document.getElementById('tab-'+r).className='rtab active '+r;
+  document.getElementById('l-club-w').style.display=r==='coach'?'block':'none';
+  document.getElementById('l-sport-w').style.display=r==='player'?'block':'none';
+  const b=document.getElementById('lbtn');
+  b.className='lbtn '+(r==='coach'?'cb':'pb');
+  b.innerHTML=`<span data-t="${r==='coach'?'enter_coach':'enter_player'}">${L()[r==='coach'?'enter_coach':'enter_player']}</span>`;
+}
+
+function doLogin(){
+  const name=document.getElementById('l-name').value.trim();
+  if(!name){showN('Please enter your name','error');return;}
+  const raw=name.trim();
+
+  // OWNER login — secret name triggers full admin
+  if(raw===OWNER_SECRET){
+    cu={name:'Owner',role:'owner',club:'TrialZone HQ',ini:'OW',isOwner:true,isAdmin:true};
+  } else if(raw===ADMIN_KEY){
+    cu={name:'Admin',role:'admin',club:'TrialZone',ini:'AD',isAdmin:true,isOwner:false};
+  } else {
+    cu={name:raw,role:selRole_,club:document.getElementById('l-club').value.trim()||'Independent',sport:document.getElementById('l-sport').value,ini:raw.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),isAdmin:false,isOwner:false};
+  }
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  setupApp();
+}
+
+function doLogout(){
+  cu=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('nav-uav-wrap').style.display='none';
+  document.getElementById('out-btn').style.display='none';
+  document.getElementById('bell-btn').style.display='none';
+  selRole('coach');
+}
+
+function setupApp(){
+  const av=document.getElementById('nav-av');
+  av.textContent=cu.ini;
+  av.className='uav '+(cu.isOwner?'admin':cu.isAdmin?'admin':cu.role);
+  document.getElementById('nav-nm').textContent=cu.name;
+  const rp=document.getElementById('nav-rp');
+  rp.textContent=cu.isOwner?'👑 Owner':cu.isAdmin?'🛡️ Admin':cu.role==='coach'?'🏅 '+L().role_coach:'⚡ '+L().role_player;
+  rp.className='rpill '+(cu.isOwner||cu.isAdmin?'admin':cu.role);
+  document.getElementById('nav-uav-wrap').style.display='flex';
+  document.getElementById('out-btn').style.display='block';
+
+  // Admin/owner: show bell + admin sidebar item
+  const showAdmin=cu.isAdmin||cu.isOwner;
+  document.getElementById('bell-btn').style.display=showAdmin?'flex':'none';
+  document.getElementById('si-admin').style.display=showAdmin?'flex':'none';
+  document.getElementById('mni-admin').style.display=showAdmin?'flex':'none';
+
+  // Coach post form
+  const showPost=cu.role==='coach'&&!cu.isAdmin&&!cu.isOwner;
+  document.getElementById('coach-pf').style.display=showPost?'block':'none';
+  document.getElementById('mni-post').style.display=showPost?'flex':'none';
+
+  document.getElementById('si-mine-lbl').textContent=cu.role==='coach'?L().my_posts:L().my_apps;
+  document.getElementById('mob-nav').style.display='flex';
+
+  buildSports();buildDocGrid();updateSkills();
+  renderFeed();renderRP();updateStats();applyT();
+}
+
+function reRenderAll(){
+  if(!cu)return;
+  document.getElementById('si-mine-lbl').textContent=cu.role==='coach'?L().my_posts:L().my_apps;
+  buildSports();renderFeed();renderRP();applyT();
+}
+
+// ── SPORTS ──
+function buildSports(){
+  const sp=['Football','Basketball','Cricket','Athletics','Badminton','Swimming','Tennis','Hockey'];
+  const make=(onclick,cls='')=>`<div class="spp${cls}" onclick="${onclick}"><div class="spdot" style="background:var(--t4)"></div>${L().all_sports}</div>`
+    +sp.map(s=>`<div class="spp" onclick="setSport('${s}',this)"><div class="spdot" style="background:${SC[s]}"></div>${SI[s]} ${s}</div>`).join('');
+  document.getElementById('sport-list').innerHTML=`<div class="spp active" onclick="setSport('all',this)"><div class="spdot" style="background:var(--t4)"></div>${L().all_sports}</div>`+sp.map(s=>`<div class="spp" onclick="setSport('${s}',this)"><div class="spdot" style="background:${SC[s]}"></div>${SI[s]} ${s}</div>`).join('');
+  document.getElementById('sport-sheet-list').innerHTML=`<div style="padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--t2);margin-bottom:3px;background:var(--surf)" onclick="setSport('all',null);toggleSportSheet()">${L().all_sports}</div>`+sp.map(s=>`<div style="padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--t1);margin-bottom:3px;display:flex;align-items:center;gap:8px" onclick="setSport('${s}',null);toggleSportSheet()"><div style="width:8px;height:8px;border-radius:50%;background:${SC[s]}"></div>${SI[s]} ${s}</div>`).join('');
+}
+
+function updateSkills(){
+  const sp=document.getElementById('f-sport')?.value||'Football';
+  selSkills=[];
+  document.getElementById('skills-wrap').innerHTML=(SKILLS[sp]||[]).map(s=>`<div class="cpill" onclick="togSkill(this,'${s}')">${s}</div>`).join('');
+}
+
+function togSkill(el,s){
+  if(selSkills.includes(s)){selSkills=selSkills.filter(x=>x!==s);el.classList.remove('sel');}
+  else{selSkills.push(s);el.classList.add('sel');}
+}
+
+function buildDocGrid(){
+  document.getElementById('doc-grid').innerHTML=DOCS.map(d=>`<div class="ditem" id="di-${d.id}" onclick="togDoc('${d.id}')"><div class="dchk" id="dc-${d.id}"></div><span style="font-size:15px">${d.icon}</span><span class="dlbl">${d.label}</span></div>`).join('');
+}
+
+function togDoc(id){
+  const item=document.getElementById('di-'+id),chk=document.getElementById('dc-'+id);
+  if(selDocs.includes(id)){selDocs=selDocs.filter(x=>x!==id);item.classList.remove('sel');chk.textContent='';}
+  else{selDocs.push(id);item.classList.add('sel');chk.textContent='✓';}
+}
+
+// ── FORM ──
+function toggleForm(open){
+  document.getElementById('pfbody').classList.toggle('open',open);
+  document.getElementById('cancelbtn').style.display=open?'inline-flex':'none';
+  if(!open){selSkills=[];selDocs=[];bannerUrl=null;document.getElementById('bua').classList.remove('has-img');document.getElementById('bprev').src='';}
+}
+
+function handleBanner(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{bannerUrl=ev.target.result;document.getElementById('bprev').src=bannerUrl;document.getElementById('bua').classList.add('has-img');};
+  r.readAsDataURL(f);
+}
+
+function submitTrial(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){showN('Trial Title is required','error');return;}
+  const customDoc=document.getElementById('f-cdoc').value.trim();
+  const docs=[...selDocs];
+  if(customDoc)docs.push('custom:'+customDoc);
+  posts.unshift({
+    id:Date.now(),coach:cu.name,club:cu.club,
+    phone:document.getElementById('f-phone').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
+    wa:document.getElementById('f-wa').value.trim(),
+    title,desc:document.getElementById('f-desc').value.trim(),
+    sport:document.getElementById('f-sport').value,
+    status:document.getElementById('f-status').value,
+    date:document.getElementById('f-date').value.trim(),
+    time:document.getElementById('f-time').value.trim(),
+    location:document.getElementById('f-loc').value.trim(),
+    slots:parseInt(document.getElementById('f-slots').value)||0,
+    ageGroup:document.getElementById('f-age').value.trim(),
+    level:document.getElementById('f-level').value,
+    gender:document.getElementById('f-gender').value,
+    skills:[...selSkills],
+    bring:document.getElementById('f-bring').value.trim(),
+    offer:document.getElementById('f-offer').value.trim(),
+    notes:document.getElementById('f-notes').value.trim(),
+    docs,docNote:document.getElementById('f-docnote').value.trim(),
+    bannerUrl,approved:false,
+    likes:0,applicants:0,comments:[],likedBy:[],appliedBy:[],ts:'Just now'
+  });
+  ['f-title','f-desc','f-date','f-time','f-loc','f-slots','f-age','f-bring','f-offer','f-notes','f-phone','f-email','f-wa','f-cdoc','f-docnote'].forEach(id=>document.getElementById(id).value='');
+  selSkills=[];selDocs=[];bannerUrl=null;
+  document.getElementById('bua').classList.remove('has-img');document.getElementById('bprev').src='';
+  document.querySelectorAll('.cpill').forEach(p=>p.classList.remove('sel'));
+  document.querySelectorAll('.ditem').forEach(d=>{d.classList.remove('sel');d.querySelector('.dchk').textContent='';});
+  toggleForm(false);renderFeed();renderAdminP();updateStats();
+  showN('✅ '+L().pending_note,'warn');
+}
+
+// ── FEED ──
+let posts=[
+  {id:1,coach:'Arjun Mehta',club:'FC Mumbai Academy',phone:'+91 98100 12345',email:'arjun@fcmumbai.com',wa:'+91 98100 12345',title:'U-17 Striker & Winger Trials',desc:'Scouting technically gifted attackers for our U-17 squad. 1v1, pace, finishing.',sport:'Football',status:'open',date:'Mar 20, 2026',time:'9:00 AM',location:'Mumbai Football Ground',slots:12,ageGroup:'U-17',level:'Intermediate',gender:'Male Only',skills:['Dribbling','Finishing','Pace'],bring:'Boots, kit, water, ID',offer:'Academy contract, coaching',notes:'2-round selection.',docs:['aadhar','birth','school','photo','medical'],docNote:'Originals + 2 copies.',bannerUrl:null,approved:true,likes:24,applicants:7,comments:[{user:'Rohan K',role:'player',text:'Accept players from Pune?'},{user:'Dev S',role:'player',text:'Registered! Excited 🔥'}],likedBy:[],appliedBy:[],ts:'2h ago'},
+  {id:2,coach:'Priya Nair',club:'Hoops India Academy',phone:'+91 88001 23456',email:'priya@hoopsindia.in',wa:'',title:'Point Guard & SG Recruitment Drive',desc:'Sharp ball-handlers & shooters aged 16–22. Academy feeds into Basketball Federation.',sport:'Basketball',status:'upcoming',date:'Mar 25, 2026',time:'10:00 AM',location:'Koramangala Indoor Stadium',slots:8,ageGroup:'16–22 yrs',level:'Advanced',gender:'Open to All',skills:['Ball Handling','Shooting'],bring:'Basketball shoes, kit, ID',offer:'Federation registration, coaching',notes:'Height preference 5\'10"+',docs:['aadhar','school','photo','medical','consent'],docNote:'',bannerUrl:null,approved:true,likes:18,applicants:4,comments:[],likedBy:[],appliedBy:[],ts:'5h ago'},
+  {id:3,coach:'Vikram Patel',club:'NSA Cricket Centre',phone:'+91 99000 34567',email:'vikram@nsacricket.com',wa:'+91 99000 34567',title:'Fast Bowler Trials — U-19 Squad',desc:'130+ km/h bowlers wanted. NSA U-19 squad with direct state selection pathway.',sport:'Cricket',status:'open',date:'Mar 18, 2026',time:'7:30 AM',location:'NSA Cricket Ground, Chennai',slots:6,ageGroup:'U-19',level:'Advanced',gender:'Male Only',skills:['Bowling','Pace','Technique'],bring:'Cricket whites, boots, ID',offer:'NSA registration, state pathway',notes:'Bowling machine warm-up provided.',docs:['aadhar','birth','school','photo','noc'],docNote:'NOC mandatory if from another academy.',bannerUrl:null,approved:true,likes:31,applicants:15,comments:[],likedBy:[],appliedBy:[],ts:'1d ago'}
+];
+
+function setNav(f,el){
+  navF=f;
+  document.querySelectorAll('.si').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const isA=(f==='admin');
+  document.getElementById('admin-panel').style.display=isA?'block':'none';
+  document.getElementById('fbar').style.display=isA?'none':'flex';
+  const showPost=cu.role==='coach'&&!cu.isAdmin&&!cu.isOwner;
+  document.getElementById('coach-pf').style.display=(isA||!showPost)?'none':(showPost?'block':'none');
+  if(isA)renderAdminP();
+  renderFeed();
+}
+
+function mobNav(f,el){
+  document.querySelectorAll('.mni').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(f==='post'){setNav('feed',null);toggleForm(true);document.getElementById('coach-pf').scrollIntoView({behavior:'smooth'});return;}
+  setNav(f,null);
+}
+
+function setChip(f,el){chipF=f;document.querySelectorAll('.fchip').forEach(e=>e.classList.remove('active'));el.classList.add('active');renderFeed();}
+function setSport(s,el){sportF=s;if(el){document.querySelectorAll('.spp').forEach(e=>e.classList.remove('active'));el.classList.add('active');}renderFeed();}
+function toggleSportSheet(){document.getElementById('sport-sheet').style.display=document.getElementById('sport-sheet').style.display==='none'?'block':'none';}
+
+function renderFeed(){
+  if(navF==='admin')return;
+  let fl=posts.filter(p=>p.approved);
+  if(navF==='mine'){
+    if(cu.isOwner||cu.isAdmin)fl=[...posts];
+    else if(cu.role==='coach')fl=posts.filter(p=>p.coach===cu.name);
+    else fl=posts.filter(p=>p.appliedBy.includes(cu.name));
+  }else if(navF==='open')fl=fl.filter(p=>p.status==='open');
+  else if(navF==='upcoming')fl=fl.filter(p=>p.status==='upcoming');
+  if(chipF!=='all')fl=fl.filter(p=>p.status===chipF);
+  if(sportF!=='all')fl=fl.filter(p=>p.sport===sportF);
+  const fc=document.getElementById('feed');
+  if(!fl.length){fc.innerHTML='<div class="empty"><div class="ei">🏟️</div><p>No trials found.</p></div>';return;}
+  fc.innerHTML=fl.map(buildCard).join('');
+}
+
+function buildCard(p){
+  const sc=SC[p.sport]||'#888',si2=SI[p.sport]||'🏆';
+  const isMineCoach=cu.role==='coach'&&p.coach===cu.name&&!cu.isAdmin&&!cu.isOwner;
+  const liked=p.likedBy.includes(cu.name),applied=p.appliedBy.includes(cu.name);
+  const sbMap={open:`<span class="sb sbo"><span class="sdts"></span>${L().open||'Open'}</span>`,upcoming:`<span class="sb sbu"><span class="sdts"></span>${L().upcoming_s||'Upcoming'}</span>`,closed:`<span class="sb sbc"><span class="sdts"></span>${L().closed||'Closed'}</span>`};
+  const pBadge=!p.approved?`<span class="sb sbp"><span class="sdts"></span>Pending</span>`:'';
+  const banner=p.bannerUrl?`<img class="tcbanner" src="${p.bannerUrl}"/>`:`<div class="tcbnph" style="background:linear-gradient(135deg,${sc}12,${sc}07)">${si2}</div>`;
+
+  const docLabels=(p.docs||[]).map(d=>{
+    if(d.startsWith('custom:'))return{icon:'📎',label:d.replace('custom:','')};
+    return DOCS.find(x=>x.id===d)||null;
+  }).filter(Boolean);
+  const docsH=docLabels.length?`<div class="docsbox"><div class="docsbox-title">${L().docs_req_label||'📄 Documents Required'}</div><div class="docsbox-list">${docLabels.map(d=>`<span class="dtag">${d.icon} ${d.label}</span>`).join('')}</div>${p.docNote?`<div style="font-size:11px;color:var(--t3);margin-top:7px;font-style:italic">📌 ${p.docNote}</div>`:''}</div>`:'';
+
+  const skillsH=p.skills&&p.skills.length?`<div class="pill-row">${p.skills.map(s=>`<span class="ptag">⚡ ${s}</span>`).join('')}</div>`:'';
+  const eligH=[p.ageGroup&&`<span class="ptag">👤 ${p.ageGroup}</span>`,p.level&&p.level!=='Any Level'&&`<span class="ptag">📊 ${p.level}</span>`,p.gender&&p.gender!=='Open to All'&&`<span class="ptag">🚻 ${p.gender}</span>`].filter(Boolean).join('');
+  const contactH=p.phone&&p.approved?`<div class="cbar">📞 <b>${p.phone}</b>${p.wa?' · 💬 '+p.wa:''}${p.email?' · 📧 '+p.email:''}</div>`:'';
+
+  // INFO GRID — only show filled fields
+  const infoItems=[];
+  if(p.date)infoItems.push({lbl:'Date',val:p.date});
+  if(p.time)infoItems.push({lbl:'Time',val:p.time});
+  if(p.location)infoItems.push({lbl:'Location',val:p.location,sm:true});
+  if(p.slots)infoItems.push({lbl:'Slots',val:`${p.applicants}/${p.slots}`});
+  const infoH=infoItems.length?`<div class="igrid" style="grid-template-columns:repeat(${Math.min(infoItems.length,4)},1fr)">${infoItems.map(i=>`<div class="ibox"><div class="ilbl">${i.lbl}</div><div class="ival" ${i.sm?'style="font-size:10px"':''}>${i.val}</div></div>`).join('')}</div>`:'';
+
+  // APPLY BUTTON
+  let apSec='';
+  if(cu.isOwner||cu.isAdmin){
+    apSec=`<button class="edit-btn" onclick="openEdit(${p.id})">✏️ Edit</button>`;
+  }else if(cu.role==='player'){
+    if(p.status==='closed')apSec=`<button class="apbtn cld">${L().closed_t}</button>`;
+    else if(applied)apSec=`<button class="apbtn applied">${L().applied}</button>`;
+    else apSec=`<button class="apbtn" onclick="applyT(${p.id})">${L().apply_now}</button>`;
+  }else if(isMineCoach&&p.status==='open'){
+    apSec=`<button class="apbtn ccb" onclick="closeT(${p.id})">${L().close_trial}</button>`;
+  }
+
+  const cmH=p.comments.slice(0,3).map(c=>`<div class="cmt"><div class="cmav ${c.role==='coach'||c.role==='admin'||c.role==='owner'?'cc':''}">${c.user.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div><div><div class="cmnm">${c.user}</div><div class="cmtx">${c.text}</div></div></div>`).join('');
+  const cls=!p.approved?'pc':'tc';
+  const pendBanner=!p.approved?`<div class="pco"></div><div class="plbl">⏳ PENDING ADMIN REVIEW</div>`:'';
+
+  return`<div class="${cls}" id="card-${p.id}">${pendBanner}${banner}
+    <div class="tcbody">
+      <div class="tctop">
+        <div class="tccrow"><div class="tcav">${p.coach.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+          <div><div class="tcnm">${p.coach}</div><div class="tccl">${p.club}</div></div>
+        </div>
+        <div class="tcbadges"><span class="tcts">${p.ts}</span>${sbMap[p.status]||''}${pBadge}</div>
+      </div>
+      <span class="stag" style="background:${sc}18;color:${sc};border:1px solid ${sc}30">${si2} ${p.sport}</span>
+      <div class="tctitle">${p.title}</div>
+      ${p.desc?`<div class="tcdesc">${p.desc}</div>`:''}
+      ${infoH}
+      ${eligH?`<div class="pill-row">${eligH}</div>`:''}
+      ${skillsH}
+      ${p.offer?`<div style="font-size:12px;color:var(--t2);margin-bottom:10px">🎁 <b>${L().if_sel}</b> ${p.offer}</div>`:''}
+      ${p.bring?`<div style="font-size:12px;color:var(--t2);margin-bottom:10px">🎒 <b>${L().bring_lbl}</b> ${p.bring}</div>`:''}
+      ${p.notes?`<div style="font-size:12px;color:var(--t3);margin-bottom:10px;font-style:italic">📌 ${p.notes}</div>`:''}
+      ${docsH}
+      ${contactH}
+      <div class="tca">
+        <button class="abt ${liked?'liked':''}" onclick="togLike(${p.id})">${liked?'❤️':'🤍'} ${p.likes}</button>
+        <button class="abt" onclick="togCm(${p.id})">💬 ${p.comments.length}</button>
+        <button class="abt" onclick="showN('🔗 Link copied!','info')">🔗</button>
+        ${apSec}
+      </div>
+      <div class="cmw" id="cmw-${p.id}">
+        <div id="cml-${p.id}">${cmH}</div>
+        <div class="cmir"><input class="cmin" id="cmi-${p.id}" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')addCm(${p.id})"/><button class="cmsnd" onclick="addCm(${p.id})">↑</button></div>
+      </div>
+    </div></div>`;
+}
+
+// ── OWNER EDIT ──
+function openEdit(id){
+  editTid=id;
+  const p=posts.find(x=>x.id===id);
+  document.getElementById('e-title').value=p.title||'';
+  document.getElementById('e-desc').value=p.desc||'';
+  document.getElementById('e-date').value=p.date||'';
+  document.getElementById('e-time').value=p.time||'';
+  document.getElementById('e-loc').value=p.location||'';
+  document.getElementById('e-slots').value=p.slots||'';
+  document.getElementById('e-status').value=p.status||'open';
+  document.getElementById('e-phone').value=p.phone||'';
+  document.getElementById('e-wa').value=p.wa||'';
+  document.getElementById('e-email').value=p.email||'';
+  document.getElementById('e-bring').value=p.bring||'';
+  document.getElementById('e-offer').value=p.offer||'';
+  document.getElementById('e-notes').value=p.notes||'';
+  document.getElementById('e-approved').value=p.approved?'1':'0';
+  document.getElementById('edit-modal').style.display='flex';
+}
+
+function saveEdit(){
+  const p=posts.find(x=>x.id===editTid);
+  p.title=document.getElementById('e-title').value.trim()||p.title;
+  p.desc=document.getElementById('e-desc').value.trim();
+  p.date=document.getElementById('e-date').value.trim();
+  p.time=document.getElementById('e-time').value.trim();
+  p.location=document.getElementById('e-loc').value.trim();
+  p.slots=parseInt(document.getElementById('e-slots').value)||p.slots;
+  p.status=document.getElementById('e-status').value;
+  p.phone=document.getElementById('e-phone').value.trim();
+  p.wa=document.getElementById('e-wa').value.trim();
+  p.email=document.getElementById('e-email').value.trim();
+  p.bring=document.getElementById('e-bring').value.trim();
+  p.offer=document.getElementById('e-offer').value.trim();
+  p.notes=document.getElementById('e-notes').value.trim();
+  p.approved=document.getElementById('e-approved').value==='1';
+  closeMod('edit-modal');renderFeed();renderAdminP();updateStats();
+  showN('✅ Trial updated!','success');
+}
+
+// ── ADMIN PANEL ──
+function renderAdminP(){
+  const pend=posts.filter(p=>!p.approved);
+  document.getElementById('ap-num').textContent=pend.length;
+  document.getElementById('si-pcount').textContent=pend.length;
+  const mb=document.getElementById('mob-badge');
+  if(mb){mb.textContent=pend.length;mb.style.display=pend.length?'flex':'none';}
+  updateStats();
+  const c=document.getElementById('acw-list');
+  if(!pend.length){c.innerHTML='<div style="text-align:center;padding:28px;color:var(--t3);font-size:13px">✅ No pending trials!</div>';return;}
+  c.innerHTML=pend.map(p=>{
+    const sc=SC[p.sport]||'#888',si2=SI[p.sport]||'🏆';
+    const bh=p.bannerUrl?`<img class="arcb vis" src="${p.bannerUrl}"/>`:`<div class="arcph" style="background:${sc}10">${si2}</div>`;
+    const docLabels=(p.docs||[]).map(d=>{if(d.startsWith('custom:'))return{icon:'📎',label:d.replace('custom:','')};return DOCS.find(x=>x.id===d)||null;}).filter(Boolean);
+    const docsAdm=docLabels.length?`<div class="arc-docs"><div class="arc-docs-t">📄 Required Docs</div><div class="arc-docs-l">${docLabels.map(d=>`<span class="arc-doc">${d.icon} ${d.label}</span>`).join('')}</div></div>`:'';
+    return`<div class="arc">${bh}<div class="arcbd">
+      <span class="stag" style="background:${sc}15;color:${sc};border:1px solid ${sc}25;font-size:10px">${si2} ${p.sport}</span>
+      <div class="arctit">${p.title}</div>
+      <div class="arcco">👤 ${p.coach} — ${p.club}</div>
+      <div class="arcdesc">${(p.desc||'').slice(0,160)}${(p.desc||'').length>160?'…':''}</div>
+      <div class="arcdet">
+        ${p.date?`<span class="arcdi">📅 ${p.date}</span>`:''}
+        ${p.location?`<span class="arcdi">📍 ${p.location}</span>`:''}
+        ${p.slots?`<span class="arcdi">🎯 ${p.slots} slots</span>`:''}
+      </div>
+      ${docsAdm}
+      <div class="arcc">📞 ${p.phone||'—'}${p.wa?' · 💬 '+p.wa:''}${p.email?' · 📧 '+p.email:''}</div>
+      <div class="arcact">
+        <button class="arcbtn arccb" onclick="openCM(${p.id})">💬 Contact</button>
+        <button class="arcbtn arcap" onclick="openAP(${p.id})">✅ Approve</button>
+        <button class="arcbtn arcrej" onclick="openRP(${p.id})">❌ Reject</button>
+        ${cu.isOwner?`<button class="arcbtn" style="background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.25)" onclick="openEdit(${p.id})">✏️ Edit</button>`:''}
+      </div>
+    </div></div>`;
+  }).join('');
+}
+
+// ── MODALS ──
+function openCM(id){
+  tid=id;const p=posts.find(x=>x.id===id);
+  document.getElementById('m-cinfo').innerHTML=`
+    <div class="mcir"><div class="mcil">Coach:</div><div class="mciv">${p.coach}</div></div>
+    <div class="mcir"><div class="mcil">Club:</div><div class="mciv">${p.club}</div></div>
+    <div class="mcir"><div class="mcil">Trial:</div><div class="mciv">${p.title}</div></div>
+    ${p.phone?`<div class="mcir"><div class="mcil">Phone:</div><div class="mciv">${p.phone}</div></div>`:''}
+    ${p.wa?`<div class="mcir"><div class="mcil">WhatsApp:</div><div class="mciv">${p.wa}</div></div>`:''}
+    ${p.email?`<div class="mcir"><div class="mcil">Email:</div><div class="mciv">${p.email}</div></div>`:''}`;
+  document.getElementById('m-msg').value='';
+  document.getElementById('cm-modal').style.display='flex';
+}
+function sendMsg(){
+  const msg=document.getElementById('m-msg').value.trim();
+  if(!msg){showN('Please write a message','error');return;}
+  const p=posts.find(x=>x.id===tid);
+  msgs.unshift({from:cu.name,to:p.coach,trial:p.title,text:msg,ts:'Just now'});
+  renderMsgs();closeMod('cm-modal');showN('✉️ Message sent to '+p.coach,'success');
+  document.getElementById('bdot').style.display='block';
+}
+function openAP(id){
+  tid=id;const p=posts.find(x=>x.id===id);
+  document.getElementById('ap-info').innerHTML=`Approving <b>"${p.title}"</b> by ${p.coach} will publish it to the live feed.`;
+  document.getElementById('ap-note').value='';
+  document.getElementById('ap-modal').style.display='flex';
+}
+function doApprove(){
+  const p=posts.find(x=>x.id===tid);p.approved=true;
+  const note=document.getElementById('ap-note').value.trim();
+  if(note){msgs.unshift({from:cu.name,to:p.coach,trial:p.title,text:`"${p.title}" APPROVED. ${note}`,ts:'Just now'});renderMsgs();document.getElementById('bdot').style.display='block';}
+  closeMod('ap-modal');renderAdminP();renderFeed();updateStats();showN('✅ "'+p.title+'" is now live!','success');
+}
+function openRP(id){tid=id;document.getElementById('rj-reason').value='';document.getElementById('rj-modal').style.display='flex';}
+function doReject(){
+  const reason=document.getElementById('rj-reason').value.trim();
+  if(!reason){showN('Please provide a reason','error');return;}
+  const p=posts.find(x=>x.id===tid);
+  msgs.unshift({from:cu.name,to:p.coach,trial:p.title,text:`"${p.title}" rejected. Reason: ${reason}`,ts:'Just now'});
+  posts=posts.filter(x=>x.id!==tid);
+  renderMsgs();document.getElementById('bdot').style.display='block';
+  closeMod('rj-modal');renderAdminP();renderFeed();updateStats();showN('❌ Trial rejected.','warn');
+}
+function closeMod(id){document.getElementById(id).style.display='none';}
+function toggleMsgs(){
+  const w=document.getElementById('msgs-wrap');
+  const open=w.style.display!=='none';
+  w.style.display=open?'none':'block';
+  if(!open){document.getElementById('bdot').style.display='none';renderMsgs();}
+}
+function renderMsgs(){
+  const l=document.getElementById('msgs-list');
+  if(!msgs.length){l.innerHTML='<div style="padding:12px;font-size:12px;color:var(--t3)">No messages yet.</div>';return;}
+  l.innerHTML=msgs.map(m=>`<div class="mli"><div class="mlif">${m.from} → ${m.to} <span style="color:var(--t3);font-weight:500">re: ${m.trial}</span></div><div class="mlit">${m.text}</div><div class="mlis">${m.ts}</div></div>`).join('');
+}
+
+// ── INTERACTIONS ──
+function togLike(id){const p=posts.find(x=>x.id===id);if(p.likedBy.includes(cu.name)){p.likedBy=p.likedBy.filter(n=>n!==cu.name);p.likes--;}else{p.likedBy.push(cu.name);p.likes++;}renderFeed();}
+function applyT(id){const p=posts.find(x=>x.id===id);if(p.appliedBy.includes(cu.name))return;p.appliedBy.push(cu.name);p.applicants++;renderFeed();updateStats();showN('🎉 '+L().applied+' — "'+p.title+'"!','success');}
+function closeT(id){posts.find(x=>x.id===id).status='closed';renderFeed();showN(L().close_trial,'info');}
+function togCm(id){document.getElementById('cmw-'+id).classList.toggle('open');}
+function addCm(id){
+  const inp=document.getElementById('cmi-'+id);const text=inp.value.trim();if(!text)return;
+  posts.find(x=>x.id===id).comments.push({user:cu.name,role:cu.role,text});
+  inp.value='';
+  const list=document.getElementById('cml-'+id);
+  const d=document.createElement('div');d.className='cmt';
+  d.innerHTML=`<div class="cmav cc">${cu.ini}</div><div><div class="cmnm">${cu.name}</div><div class="cmtx">${text}</div></div>`;
+  list.appendChild(d);
+}
+
+// ── RIGHT PANEL ──
+function renderRP(){
+  const coaches=[...new Map(posts.map(p=>[p.coach,{name:p.coach,club:p.club}])).values()].slice(0,5);
+  document.getElementById('rp-coaches').innerHTML=coaches.map(c=>{
+    const ini=c.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const fw=followed.includes(c.name);
+    return`<div class="cr"><div class="crav">${ini}</div><div class="cri"><div class="crn">${c.name}</div><div class="crc">${c.club}</div></div><button class="fwb ${fw?'fw':''}" onclick="togFollow('${c.name}',this)">${fw?'Following':'Follow'}</button></div>`;
+  }).join('');
+}
+function togFollow(n,btn){
+  if(followed.includes(n)){followed=followed.filter(x=>x!==n);btn.textContent='Follow';btn.classList.remove('fw');}
+  else{followed.push(n);btn.textContent='Following';btn.classList.add('fw');showN('Following '+n,'info');}
+}
+
+function updateStats(){
+  document.getElementById('st-a').textContent=posts.filter(p=>p.approved&&p.status==='open').length;
+  document.getElementById('st-c').textContent=new Set(posts.map(p=>p.coach)).size;
+  document.getElementById('st-ap').textContent=posts.reduce((s,p)=>s+p.applicants,0);
+  document.getElementById('st-p').textContent=posts.filter(p=>!p.approved).length;
+}
+
+function showN(msg,type='info'){
+  const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';
+  setTimeout(()=>n.classList.remove('show'),3400);
+}
+
+selRole('coach');applyT();
+</script>
+</body>
+</html>
